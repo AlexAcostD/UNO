@@ -1,0 +1,49 @@
+from typing import List, Dict,Tuple,Optional
+from game.cartas import Carta, Tipo, Color
+from game.baraja import Baraja
+import random
+
+
+
+class UNOGame:
+    def __init__(self, nombre_jugador: str, nombre_bot: str = "Bot", cartas_por_jugador: int = 7):
+ 
+        self.nombre_jugador = nombre_jugador
+        self.nombre_bot = nombre_bot
+        self.baraja = Baraja()  
+        
+        self.manos: Dict[str, List[Carta]] = {
+            nombre_jugador: [],
+            nombre_bot: []
+        }
+        for _ in range(cartas_por_jugador):
+            self.manos[nombre_jugador].append(self.baraja.roba_carta())
+            self.manos[nombre_bot].append(self.baraja.roba_carta())
+
+        self.descartadas: List[Carta] = []
+        carta = self.baraja.roba_carta()
+        # Repetir hasta que sea NUMERO (para que el juego arranque con una carta numérica)
+        while carta.tipo != Tipo.NUMERO:
+            self.baraja.devolver_carta(carta)
+            random.shuffle(self.baraja.cartas)
+            carta = self.baraja.roba_carta()
+        self.carta_tope: Carta = carta
+        self.descartadas.append(carta)
+
+        # 4. Estado inicial de turno y acumulador de “+2”
+        self.turno: str = nombre_jugador  # el jugador humano arranca
+        self.acumulador_mas2: int = 0     # si alguien lanza +2, el siguiente roba acumulado
+
+
+
+def repartir_manos(nombres: List[str], cartas_por_jugador: int = 7) -> Tuple[Dict[str, List[Carta]], Carta, Baraja]:
+
+    baraja = Baraja()  # Crea una nueva baraja
+    manos: Dict[str, List[Carta]] = {}
+
+    for nombre in nombres:
+        mano = [baraja.roba_carta() for _ in range(cartas_por_jugador)]
+        manos[nombre] = mano
+
+    carta_inicial = baraja.roba_carta()
+    return manos,carta_inicial,baraja

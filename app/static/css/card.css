@@ -1,0 +1,43 @@
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+    .carta-tope img {
+      width: 100px;
+      height: 140px;
+    }
+
+.card-deck {
+  
+  position: relative;
+  width: 500px;
+  height: 250px;
+  perspective: 1200px;
+}
+
+.card-deck img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 110px;
+  height: 180px;
+  margin-left: -60px;
+  transition: transform 0.5s;
+  transform-origin: bottom center;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.card-selected {
+  z-index: 10 !important;
+  transform: scale(1.2) translateY(-20%) !important;
+}
+

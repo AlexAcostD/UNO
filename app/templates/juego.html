@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego UNO</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+  <style>
+    /* Contenedor principal en tres columnas: datos | cartas | opciones */
+    .layout-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    /* Cada sección ocupa un tercio del ancho disponible */
+    #datos,
+    #cartas,
+    #opciones {
+      flex: 1;
+    }
+    /* Centrar el contenido de la sección de cartas */
+    #cartas {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout-container">
+    <!-- ============================= -->
+    <!-- Sección 1: Datos del Jugador -->
+    <!-- ============================= -->
+    <section id="datos">
+      <h1>¡Hola {{ nombre }}!</h1>
+      <p>Dificultad: {{ dificultad }}</p>
+    </section>
+
+    <!-- ============================= -->
+    <!-- Sección 2: Cartas en Mano -->
+    <!-- ============================= -->
+    <section id="cartas">
+      <!-- Mano del Jugador -->
+      <h2>Tu mano</h2>
+      <div class="card-deck" id="deck">
+        {% for carta in mano_jugador %}
+          {% if carta.tipo == Tipo.CAMBIA_COLOR %}
+            <img
+              src="{{ url_for('static', filename='img/CCOLOR.png') }}"
+              alt="Cambia color"
+            >
+          {% elif carta.tipo == Tipo.NUMERO %}
+            <img
+              src="{{ url_for('static', filename='img/' ~ carta.color.value ~ '/NUM-' ~ carta.valor|string ~ '.png') }}"
+              alt="Carta número"
+            >
+          {% else %}
+            <img
+              src="{{ url_for('static', filename='img/' ~ carta.color.value ~ '/' ~ carta.tipo.value ~ '.png') }}"
+              alt="Carta especial"
+            >
+          {% endif %}
+        {% endfor %}
+      </div>
+
+              <div class="carta-tope">
+          {% if carta_tope.tipo == Tipo.CAMBIA_COLOR %}
+            <img src="{{ url_for('static', filename='img/CCOLOR.png') }}" alt="Carta tope">
+          {% elif carta_tope.tipo == Tipo.NUMERO %}
+            <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/NUM-' ~ carta_tope.valor|string ~ '.png') }}"
+                 alt="Carta tope">
+          {% else %}
+            <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/' ~ carta_tope.tipo.value ~ '.png') }}"
+                 alt="Carta tope">
+          {% endif %}
+        </div>
+
+      <!-- Mano del Bot -->
+      <h2>Mano del Bot</h2>
+      <div
+        class="card-deck"
+        id="deck-oponente"
+        data-count="{{ mano_bot|length }}"
+        data-dorso="{{ url_for('static', filename='img/CARTA_UNO.png') }}"
+      ></div>
+    </section>
+
+    <!-- ================================== -->
+    <!-- Sección 3: Controles y Opciones -->
+    <!-- ================================== -->
+    <section id="opciones">
+      <!-- Ejemplo de botones de acción -->
+      <h2>Opciones</h2>
+      <button id="btn-robar">Robar Carta</button>
+      <button id="btn-finalizar">Terminar Partida</button>
+    </section>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/card.js') }}"></script>
+</body>
+</html>
