@@ -47,31 +47,55 @@
             <img
               src="{{ url_for('static', filename='img/CCOLOR.png') }}"
               alt="Cambia color"
-            >
+              data-color="NEGRO"
+              data-tipo="CCOLOR"
+              data-valor=""
+              >
           {% elif carta.tipo == Tipo.NUMERO %}
             <img
               src="{{ url_for('static', filename='img/' ~ carta.color.value ~ '/NUM-' ~ carta.valor|string ~ '.png') }}"
               alt="Carta número"
+              data-color="{{ carta.color.value }}"
+              data-tipo="NUM"
+              data-valor="{{ carta.valor }}"
             >
           {% else %}
             <img
               src="{{ url_for('static', filename='img/' ~ carta.color.value ~ '/' ~ carta.tipo.value ~ '.png') }}"
               alt="Carta especial"
+              data-color="{{ carta.color.value }}"
+              data-tipo="{{ carta.tipo.value }}"
+              data-valor=""
             >
           {% endif %}
         {% endfor %}
       </div>
 
-              <div class="carta-tope">
-          {% if carta_tope.tipo == Tipo.CAMBIA_COLOR %}
-            <img src="{{ url_for('static', filename='img/CCOLOR.png') }}" alt="Carta tope">
-          {% elif carta_tope.tipo == Tipo.NUMERO %}
-            <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/NUM-' ~ carta_tope.valor|string ~ '.png') }}"
-                 alt="Carta tope">
-          {% else %}
-            <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/' ~ carta_tope.tipo.value ~ '.png') }}"
-                 alt="Carta tope">
-          {% endif %}
+      <div class="carta-tope">
+  {% if carta_tope.tipo == Tipo.CAMBIA_COLOR %}
+    <img src="{{ url_for('static', filename='img/CCOLOR.png') }}" 
+         alt="Carta tope"
+         id="carta-tope"
+         data-color=""
+         data-tipo="CCOLOR"
+         data-valor="">
+  {% elif carta_tope.tipo == Tipo.NUMERO %}
+    <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/NUM-' ~ carta_tope.valor|string ~ '.png') }}" 
+         alt="Carta tope"
+         id="carta-tope"
+         data-color="{{ carta_tope.color.value }}"
+         data-tipo="NUM"
+         data-valor="{{ carta_tope.valor }}">
+  {% else %}
+    <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/' ~ carta_tope.tipo.value ~ '.png') }}" 
+         alt="Carta tope"
+         id="carta-tope"
+         data-color="{{ carta_tope.color.value }}"
+         data-tipo="{{ carta_tope.tipo.value }}"
+         data-valor="">
+  {% endif %}
+
+
         </div>
 
       <!-- Mano del Bot -->
@@ -84,14 +108,14 @@
       ></div>
     </section>
 
-    <!-- ================================== -->
-    <!-- Sección 3: Controles y Opciones -->
-    <!-- ================================== -->
+
     <section id="opciones">
-      <!-- Ejemplo de botones de acción -->
+ 
       <h2>Opciones</h2>
-      <button id="btn-robar">Robar Carta</button>
+      <button id="btn-jugar">Jugar Carta</button>
       <button id="btn-finalizar">Terminar Partida</button>
+      <button id="btn-tomar">Tomar Carta</button>
+
     </section>
   </div>
 

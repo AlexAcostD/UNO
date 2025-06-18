@@ -33,17 +33,9 @@ class UNOGame:
         # 4. Estado inicial de turno y acumulador de “+2”
         self.turno: str = nombre_jugador  # el jugador humano arranca
         self.acumulador_mas2: int = 0     # si alguien lanza +2, el siguiente roba acumulado
-
-
-
-def repartir_manos(nombres: List[str], cartas_por_jugador: int = 7) -> Tuple[Dict[str, List[Carta]], Carta, Baraja]:
-
-    baraja = Baraja()  # Crea una nueva baraja
-    manos: Dict[str, List[Carta]] = {}
-
-    for nombre in nombres:
-        mano = [baraja.roba_carta() for _ in range(cartas_por_jugador)]
-        manos[nombre] = mano
-
-    carta_inicial = baraja.roba_carta()
-    return manos,carta_inicial,baraja
+    def tomar_carta(self,jugador:str) -> None:
+        if self.baraja.cartas:
+            carta = self.baraja.roba_carta()
+            self.manos[jugador].append(carta)
+        else:
+            print("No hay más cartas en la baraja para robar.")

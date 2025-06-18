@@ -44,7 +44,7 @@ class Carta:
             rep = "DESCONOCIDA"  # no debería llegar aquí
 
         return {
-            "color": self.color.value,
+            "color": self.color.value if self.color else None,
             "tipo": self.tipo.value,
             "valor": self.valor,
             "representacion": rep
