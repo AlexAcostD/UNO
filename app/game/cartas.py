@@ -46,7 +46,7 @@ class Carta:
         return {
             "color": self.color.value if self.color else None,
             "tipo": self.tipo.value,
-            "valor": self.valor,
+            "valor": self.valor if self.valor is not None else None,
             "representacion": rep
         }
 

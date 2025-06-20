@@ -39,3 +39,37 @@ class UNOGame:
             self.manos[jugador].append(carta)
         else:
             print("No hay más cartas en la baraja para robar.")
+    def jugar_carta(self, jugador, carta) :
+        if not self._es_compatible(carta, self.carta_tope):
+            raise ValueError("La carta no es compatible con la carta tope.")
+    
+        self.manos[jugador].remove(carta)
+        self.descartadas.append(self.carta_tope)
+        self.carta_tope = carta
+        self.turno = self.nombre_bot if jugador == self.nombre_jugador else self.nombre_jugador
+    def turno_bot(self):
+        mano_bot=self.manos[self.nombre_bot]
+        carta_jugada = None
+        for carta in mano_bot:
+            if self._es_compatible(carta, self.carta_tope):
+                carta_jugada = carta
+                break
+        if carta_jugada:
+            self.jugar_carta(self.nombre_bot, carta_jugada)
+        else:
+            self.tomar_carta(self.nombre_bot)
+            
+    def estado_para_cliente(self):
+        return {
+            "mano_jugador": [c.to_dict() for c in self.manos[self.nombre_jugador]],
+            "cantidad_cartas_bot": len(self.manos[self.nombre_bot]),
+            "carta_tope": self.carta_tope.to_dict(),
+            "turno": self.turno
+        }
+
+    def _es_compatible(self, nueva, tope):
+        if nueva.tipo == Tipo.CAMBIA_COLOR:
+            return True
+        if nueva.tipo == Tipo.NUMERO and tope.tipo == Tipo.NUMERO:
+            return nueva.color == tope.color or nueva.valor == tope.valor
+        return nueva.color == tope.color

@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     deckOponente.appendChild(img);
   }
   actualizarCartas(deckOponente);
+});
+
 
   // Botón "Tomar Carta"
   document.getElementById('btn-tomar').addEventListener('click', () => {
@@ -81,46 +83,121 @@ document.addEventListener('DOMContentLoaded', () => {
       actualizarCartas(deck);
       deck.removeEventListener('click', handleCardClick);
       deck.addEventListener('click', handleCardClick);
+    // 2) Actualizar carta tope
+    const topeImg = document.getElementById('carta-tope');
+    const ct = data.carta_tope;
+    topeImg.src = ct.tipo === 'NUM'
+      ? `/static/img/${ct.color}/NUM-${ct.valor}.png`
+      : `/static/img/${ct.color}/${ct.tipo}.png`;
+    topeImg.dataset.color = ct.color;
+    topeImg.dataset.tipo = ct.tipo;
+    topeImg.dataset.valor = ct.valor || '';
+    // 3) Actualizar cartas del bot
+    const deckBot = document.getElementById('deck-oponente');
+    deckBot.innerHTML = '';
+    for (let i = 0; i < data.cantidad_cartas_bot; i++) {
+      const imgBack = document.createElement('img');
+      imgBack.src = deckBot.dataset.dorso;
+      deckBot.appendChild(imgBack);
+    }
+    actualizarCartas(deckBot);
+    // 4) Acción del bot después de que el jugador tomó carta
+    const ab = data.accion_bot;
+    if (ab.accion === 'jugó' || ab.accion === 'robó_y_jugó') {
+      const c = ab.carta;
+      alert(`El bot jugó: ${c.tipo === 'NUM' ? c.color + ' ' + c.valor : c.color + ' ' + c.tipo}`);
+    } else if (ab.accion === 'robó') {
+      alert('El bot robó una carta.');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+
+
     });
   });
 
-  // Botón "Jugar Carta"
-  document.getElementById('btn-jugar').addEventListener('click', () => {
-    const seleccionada = deck.querySelector('.card-selected');
-    if (!seleccionada) {
-      alert('Debes seleccionar una carta primero.');
+
+
+
+//-------------------------------------------------
+// Botón "Jugar Carta"
+
+document.getElementById('btn-jugar').addEventListener('click', () => {
+  const seleccionada = deck.querySelector('.card-selected');
+  if (!seleccionada) {
+    alert('Debes seleccionar una carta primero.');
+    return;
+  }
+
+  // 1) Preparar datos de la carta del jugador
+  const { color: colorSel, tipo: tipoSel, valor: valorSel } = seleccionada.dataset;
+  const payload = { color: colorSel, tipo: tipoSel, valor: valorSel };
+
+  // 2) Llamar al servidor
+  fetch('/jugar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
       return;
     }
-    const topeImg = document.getElementById('carta-tope');
-    const { color: colorSel, tipo: tipoSel, valor: valorSel } = seleccionada.dataset;
-    const { color: colorTope, tipo: tipoTope, valor: valorTope } = topeImg.dataset;
 
-    let esCompatible = false;
-    if (tipoSel === 'CCOLOR') {
-      esCompatible = true;
-    } else if (colorSel === colorTope) {
-      esCompatible = true;
-    } else if (tipoSel === 'NUM' && tipoTope === 'NUM' && valorSel === valorTope) {
-      esCompatible = true;
-    }
-
-    if (!esCompatible) {
-      alert('Esa carta no se puede jugar. Debe coincidir en color o número.');
-      return;
-    }
-
-    // Reemplaza la carta tope visualmente
-    topeImg.src = seleccionada.src;
-    topeImg.dataset.color = colorSel;
-    topeImg.dataset.tipo  = tipoSel;
-    topeImg.dataset.valor = valorSel;
-
-    // Quita la carta jugada del deck
-    seleccionada.remove();
-
-    // Reaplica abanico
+    // 3) Reconstruir mano del jugador (por si robó cartas)
+    deck.innerHTML = '';
+    data.mano_jugador.forEach(carta => {
+      const img = document.createElement('img');
+      if (carta.tipo === 'CCOLOR') {
+        img.src = '/static/img/CCOLOR.png';
+      } else if (carta.tipo === 'NUM') {
+        img.src = `/static/img/${carta.color}/NUM-${carta.valor}.png`;
+      } else {
+        img.src = `/static/img/${carta.color}/${carta.tipo}.png`;
+      }
+      img.dataset.color = carta.color;
+      img.dataset.tipo  = carta.tipo;
+      img.dataset.valor = carta.valor || '';
+      deck.appendChild(img);
+    });
     actualizarCartas(deck);
+    deck.removeEventListener('click', handleCardClick);
+    deck.addEventListener('click', handleCardClick);
 
-    alert(`¡Carta jugada: ${tipoSel === 'NUM' ? colorSel + ' ' + valorSel : colorSel + ' ' + tipoSel}!`);
+    // 4) **Actualizar carta tope usando data.carta_tope** (después de bot incluido)
+    const topeImg = document.getElementById('carta-tope');
+    const ct = data.carta_tope;
+    topeImg.src = ct.tipo === 'NUM'
+      ? `/static/img/${ct.color}/NUM-${ct.valor}.png`
+      : `/static/img/${ct.color}/${ct.tipo}.png`;
+    topeImg.dataset.color = ct.color;
+    topeImg.dataset.tipo  = ct.tipo;
+    topeImg.dataset.valor = ct.valor || '';
+
+    // 5) Actualizar dorsos del bot
+    const deckBot = document.getElementById('deck-oponente');
+    deckBot.innerHTML = '';
+    for (let i = 0; i < data.cantidad_cartas_bot; i++) {
+      const imgBack = document.createElement('img');
+      imgBack.src = deckBot.dataset.dorso;
+      deckBot.appendChild(imgBack);
+    }
+    actualizarCartas(deckBot);
+
+    // 6) Mostrar alerta con lo que hizo el bot
+    const ab = data.accion_bot;
+    if (ab.accion === 'jugó' || ab.accion === 'robó_y_jugó') {
+      const c = ab.carta;
+      alert(`El bot jugó: ${c.tipo === 'NUM' ? c.color + ' ' + c.valor : c.color + ' ' + c.tipo}`);
+    } else if (ab.accion === 'robó') {
+      alert('El bot robó una carta.');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+
   });
 });
