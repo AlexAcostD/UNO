@@ -1,28 +1,30 @@
-from typing import List, Dict,Tuple,Optional
+from typing import List, Dict, Optional
 from game.cartas import Carta, Tipo, Color
 from game.baraja import Baraja
 import random
 
-
-
 class UNOGame:
-    def __init__(self, nombre_jugador: str, nombre_bot: str = "Bot", cartas_por_jugador: int = 7):
- 
+    def __init__(
+        self,
+        nombre_jugador: str,
+        nombre_bot: str = "Bot",
+        cartas_por_jugador: int = 7,
+        dificultad: str = "FACIL"
+    ) -> None:
         self.nombre_jugador = nombre_jugador
         self.nombre_bot = nombre_bot
-        self.baraja = Baraja()  
-        
-        self.manos: Dict[str, List[Carta]] = {
-            nombre_jugador: [],
-            nombre_bot: []
-        }
+        self.dificultad = dificultad
+        self.baraja = Baraja()
+
+        # Repartir manos
+        self.manos: Dict[str, List[Carta]] = {nombre_jugador: [], nombre_bot: []}
         for _ in range(cartas_por_jugador):
             self.manos[nombre_jugador].append(self.baraja.roba_carta())
             self.manos[nombre_bot].append(self.baraja.roba_carta())
 
+        # Carta inicial
         self.descartadas: List[Carta] = []
         carta = self.baraja.roba_carta()
-        # Repetir hasta que sea NUMERO (para que el juego arranque con una carta numérica)
         while carta.tipo != Tipo.NUMERO:
             self.baraja.devolver_carta(carta)
             random.shuffle(self.baraja.cartas)
@@ -30,46 +32,135 @@ class UNOGame:
         self.carta_tope: Carta = carta
         self.descartadas.append(carta)
 
-        # 4. Estado inicial de turno y acumulador de “+2”
-        self.turno: str = nombre_jugador  # el jugador humano arranca
-        self.acumulador_mas2: int = 0     # si alguien lanza +2, el siguiente roba acumulado
-    def tomar_carta(self,jugador:str) -> None:
-        if self.baraja.cartas:
+        # Estado de turno y acumulador +2
+        self.turno: str = nombre_jugador
+        self.acumulador_mas2: int = 0
+
+    def _cambiar_turno(self) -> None:
+        self.turno = (
+            self.nombre_bot
+            if self.turno == self.nombre_jugador
+            else self.nombre_jugador
+        )
+
+    def robar_carta(self, jugador: str, cantidad: int = 1) -> None:
+        """Robar `cantidad` cartas, reconstruyendo el mazo si se vacía"""
+        for _ in range(cantidad):
+            if not self.baraja.cartas:
+                full = Baraja().crear_baraja()
+                used = (
+                    self.descartadas
+                    + [self.carta_tope]
+                    + self.manos[self.nombre_jugador]
+                    + self.manos[self.nombre_bot]
+                )
+                self.baraja.cartas = [c for c in full if c not in used]
+                random.shuffle(self.baraja.cartas)
             carta = self.baraja.roba_carta()
             self.manos[jugador].append(carta)
+
+    def tomar_carta(self, jugador: str) -> None:
+        # Si hay acumulador, roba acumulado y pasa turno
+        if self.acumulador_mas2 > 0:
+            self.robar_carta(jugador, self.acumulador_mas2)
+            self.acumulador_mas2 = 0
+            self._cambiar_turno()
         else:
-            print("No hay más cartas en la baraja para robar.")
-    def jugar_carta(self, jugador, carta) :
-        if not self._es_compatible(carta, self.carta_tope):
-            raise ValueError("La carta no es compatible con la carta tope.")
+            self.robar_carta(jugador)
+            self._cambiar_turno()
+
+    def _es_compatible(self, nueva: Carta, tope: Carta) -> bool:
+        # Si hay acumulador, sólo +2 es válido
+        if self.acumulador_mas2 > 0:
+            return nueva.tipo == Tipo.PULSA_DOS
+
+        # Comodín cambia color siempre válido
+        if nueva.tipo == Tipo.CAMBIA_COLOR:
+            return True
+
+        # Carta número: coincidir color o valor
+        if nueva.tipo == Tipo.NUMERO and tope.tipo == Tipo.NUMERO:
+            return nueva.color == tope.color or nueva.valor == tope.valor
+
+        # Carta número: coincidir color
     
+        # Cartas especiales (+2 o Skip): coincidir color o tipo
+        if nueva.tipo in (Tipo.PULSA_DOS, Tipo.PIERDE_TURNO):
+            return nueva.color == tope.color or nueva.tipo == tope.tipo
+
+        if nueva.color == tope.color:
+            return True
+        return False
+
+    def _resolver_acumulador(self) -> None:
+        if self.acumulador_mas2 == 0:
+            return
+        jugador = self.turno
+        if any(c.tipo == Tipo.PULSA_DOS for c in self.manos[jugador]):
+            return
+        self.robar_carta(jugador, self.acumulador_mas2)
+        self.acumulador_mas2 = 0
+        self._cambiar_turno()
+
+    def jugar_carta(
+        self,
+        jugador: str,
+        carta: Carta,
+    ) -> None:
+        if carta not in self.manos[jugador]:
+            raise ValueError("No tienes esa carta en tu mano.")
+        if not self._es_compatible(carta, self.carta_tope):
+            raise ValueError("Carta no válida sobre la tope.")
+
         self.manos[jugador].remove(carta)
-        self.descartadas.append(self.carta_tope)
+        self.descartadas.append(carta)
         self.carta_tope = carta
-        self.turno = self.nombre_bot if jugador == self.nombre_jugador else self.nombre_jugador
-    def turno_bot(self):
-        mano_bot=self.manos[self.nombre_bot]
-        carta_jugada = None
-        for carta in mano_bot:
-            if self._es_compatible(carta, self.carta_tope):
-                carta_jugada = carta
-                break
-        if carta_jugada:
-            self.jugar_carta(self.nombre_bot, carta_jugada)
-        else:
-            self.tomar_carta(self.nombre_bot)
-            
-    def estado_para_cliente(self):
+
+        # Efecto +2: acumular y pasar turno
+        if carta.tipo == Tipo.PULSA_DOS:
+            self.acumulador_mas2 += 2
+            self._cambiar_turno()
+            return
+
+        # Efecto skip
+
+        # Efecto cambia color
+
+
+        # Turno normal
+        self._cambiar_turno()
+
+    def turno_bot(self) -> Dict:
+        bot = self.nombre_bot
+        if self.acumulador_mas2 > 0:
+            for c in list(self.manos[bot]):
+                if c.tipo == Tipo.PULSA_DOS:
+                    self.jugar_carta(bot, c)
+                    return {"accion": "jugó", "carta": c.to_dict()}
+            cantidad = self.acumulador_mas2
+            self.robar_carta(bot, cantidad)
+            self.acumulador_mas2 = 0
+            self._cambiar_turno()
+            return {"accion": "robó_acumulado", "cantidad": cantidad}
+
+        for c in list(self.manos[bot]):
+            if self._es_compatible(c, self.carta_tope):
+                self.jugar_carta(bot, c)
+                return {"accion": "jugó", "carta": c.to_dict()}
+
+        self.robar_carta(bot)
+        carta_robada = self.manos[bot][-1]
+        if self._es_compatible(carta_robada, self.carta_tope):
+            self.jugar_carta(bot, carta_robada)
+            return {"accion": "robó_y_jugó", "carta": carta_robada.to_dict()}
+
+        self._cambiar_turno()
+        return {"accion": "robó", "carta": None}
+
+    def estado_para_cliente(self) -> Dict:
         return {
             "mano_jugador": [c.to_dict() for c in self.manos[self.nombre_jugador]],
             "cantidad_cartas_bot": len(self.manos[self.nombre_bot]),
             "carta_tope": self.carta_tope.to_dict(),
             "turno": self.turno
         }
-
-    def _es_compatible(self, nueva, tope):
-        if nueva.tipo == Tipo.CAMBIA_COLOR:
-            return True
-        if nueva.tipo == Tipo.NUMERO and tope.tipo == Tipo.NUMERO:
-            return nueva.color == tope.color or nueva.valor == tope.valor
-        return nueva.color == tope.color

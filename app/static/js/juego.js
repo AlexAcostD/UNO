@@ -14,3 +14,4 @@ function iniciarJuego(nombre, dificultad) {
     console.error("Error al iniciar el juego:", err);
   });
 }
+

@@ -201,3 +201,24 @@ document.getElementById('btn-jugar').addEventListener('click', () => {
 
   });
 });
+
+//-------------Btn "guardar Conexión DB"-------------------
+document.getElementById('btn-guardar').addEventListener('click', () => {
+  fetch('/guardar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({})  // No necesitamos enviar datos; el servidor usa partida_actual
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.ok) {
+      alert('✅ Partida guardada correctamente.');
+    } else {
+      alert('❌ Error al guardar partida: ' + (data.error || 'Error desconocido'));
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert('❌ No se pudo conectar al servidor para guardar.');
+  });
+});

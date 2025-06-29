@@ -1,3 +1,10 @@
+
+function cargar() {
+  window.location.href = '/cargar.html';
+}
+    
+    
+    
     function jugar() {
     const nombre = document.getElementById('nombre').value.trim();
     const dificultad = document.getElementById('btnDificultad').textContent;

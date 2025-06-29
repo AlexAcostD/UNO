@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cargar</title>
+</head>
+<body>
+  <h2>Partidas Guardadas</h2>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Jugador</th>
+        <th>Cartas del Jugador</th>
+        <th>Carta Actual</th>
+        <th>Dificultad</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for partida in partidas %}
+      <tr>
+        <td>{{ partida[0] }}</td>
+        <td>{{ partida[5] }}</td> <!-- Jugador -->
+        <td>
+          {% for carta in partida[6] %}
+            {{ carta }}<br>
+          {% endfor %}
+        </td>
+        <td>{{ partida[1] }} - {{ partida[2] }}{% if partida[3] is not none %} {{ partida[3] }}{% endif %}</td>
+        <td>{{ partida[4] }}</td>
+        <td>
+          <form action="/juego.html" method="get">
+            <input type="hidden" name="id_partida" value="{{ partida[0] }}">
+            <button type="submit">Cargar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
