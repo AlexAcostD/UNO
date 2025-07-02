@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-  // Botón "Tomar Carta"
+  //3 Botón "Tomar Carta"
   document.getElementById('btn-tomar').addEventListener('click', () => {
     fetch('/tomar', {
       method: 'POST',
@@ -121,8 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 //-------------------------------------------------
-// Botón "Jugar Carta"
 
+//4
+//  Botón "Jugar Carta"
+let colorElegido = null; 
 document.getElementById('btn-jugar').addEventListener('click', () => {
   const seleccionada = deck.querySelector('.card-selected');
   if (!seleccionada) {
@@ -131,10 +133,18 @@ document.getElementById('btn-jugar').addEventListener('click', () => {
   }
 
   // 1) Preparar datos de la carta del jugador
-  const { color: colorSel, tipo: tipoSel, valor: valorSel } = seleccionada.dataset;
-  const payload = { color: colorSel, tipo: tipoSel, valor: valorSel };
+const { color: colorSel, tipo: tipoSel, valor: valorSel } = seleccionada.dataset;
+const payload = { color: colorSel, tipo: tipoSel, valor: valorSel };
 
+if (tipoSel === "CCOLOR") {
+  if (!colorElegido) {
+    alert("Debes elegir un color antes de jugar la carta.");
+    return;
+  }
+  payload.nuevo_color = colorElegido;
+}
   // 2) Llamar al servidor
+  console.log("Payload enviado:", payload);
   fetch('/jugar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -147,12 +157,13 @@ document.getElementById('btn-jugar').addEventListener('click', () => {
       return;
     }
 
+    document.getElementById('selector-color').style.display = 'none';
     // 3) Reconstruir mano del jugador (por si robó cartas)
     deck.innerHTML = '';
     data.mano_jugador.forEach(carta => {
       const img = document.createElement('img');
       if (carta.tipo === 'CCOLOR') {
-        img.src = '/static/img/CCOLOR.png';
+        img.src = `/static/img/${carta.color}/CCOLOR.png`;
       } else if (carta.tipo === 'NUM') {
         img.src = `/static/img/${carta.color}/NUM-${carta.valor}.png`;
       } else {
@@ -202,6 +213,9 @@ document.getElementById('btn-jugar').addEventListener('click', () => {
   });
 });
 
+
+
+
 //-------------Btn "guardar Conexión DB"-------------------
 document.getElementById('btn-guardar').addEventListener('click', () => {
   fetch('/guardar', {
@@ -220,5 +234,29 @@ document.getElementById('btn-guardar').addEventListener('click', () => {
   .catch(err => {
     console.error(err);
     alert('❌ No se pudo conectar al servidor para guardar.');
+  });
+});
+//CColor
+// Mostrar el selector de color si se elige una carta CCOLOR
+deck.addEventListener('click', () => {
+  const seleccionada = deck.querySelector('.card-selected');
+  if (!seleccionada) return;
+
+  const tipo = seleccionada.dataset.tipo;
+  const colorSelector = document.getElementById('selector-color');
+
+  if (tipo === "CCOLOR") {
+    colorSelector.style.display = 'block';
+  } else {
+    colorSelector.style.display = 'none';
+    colorElegido = null;
+  }
+});
+
+// Manejar clic en los botones de color
+document.querySelectorAll('.color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    colorElegido = btn.dataset.color;
+    alert(`Color elegido: ${colorElegido}`);
   });
 });

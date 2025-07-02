@@ -45,9 +45,9 @@
         {% for carta in mano_jugador %}
           {% if carta.tipo == Tipo.CAMBIA_COLOR %}
             <img
-              src="{{ url_for('static', filename='img/CCOLOR.png') }}"
+              src="{{ url_for('static', filename='img/' ~ carta.color.value ~ '/CCOLOR.png') }}"
               alt="Cambia color"
-              data-color="NEGRO"
+              data-color="{{ carta.color.value }}"
               data-tipo="CCOLOR"
               data-valor=""
               >
@@ -73,7 +73,7 @@
 
       <div class="carta-tope">
   {% if carta_tope.tipo == Tipo.CAMBIA_COLOR %}
-    <img src="{{ url_for('static', filename='img/CCOLOR.png') }}" 
+    <img src="{{ url_for('static', filename='img/' ~ carta_tope.color.value ~ '/CCOLOR.png') }}" 
          alt="Carta tope"
          id="carta-tope"
          data-color=""
@@ -119,6 +119,14 @@
 
     </section>
   </div>
+
+<div id="selector-color" style="display: none; margin-top: 10px;">
+  <p>Selecciona el nuevo color:</p>
+  <button class="color-btn" data-color="ROJO">Rojo</button>
+  <button class="color-btn" data-color="AZUL">Azul</button>
+  <button class="color-btn" data-color="VERDE">Verde</button>
+  <button class="color-btn" data-color="AMARILLO">Amarillo</button>
+</div>
 
   <script src="{{ url_for('static', filename='js/card.js') }}"></script>
 </body>

@@ -8,7 +8,7 @@ class Baraja:
         self.cartas : List[Carta]=self.crear_baraja()
     def crear_baraja(self) -> List[Carta]:
         lista = []
-        for color in Color:
+        for color in (Color.AZUL, Color.VERDE, Color.ROJO, Color.AMARILLO):
 
             for num in range(1, 10):
                 lista += [Carta(color, Tipo.NUMERO, num)] 
@@ -22,5 +22,5 @@ class Baraja:
     def devolver_carta(self, carta: Carta) -> None:
         self.cartas.append(carta)
     
-    
+   
     

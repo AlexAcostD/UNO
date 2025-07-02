@@ -8,6 +8,7 @@ class Color(Enum):
     VERDE = "VERDE"
     ROJO = "ROJO"
     AMARILLO = "AMARILLO"
+    NEGRO = "NEGRO"
 
 class Tipo(Enum):
     NUMERO         = "NUM"
@@ -16,17 +17,13 @@ class Tipo(Enum):
     CAMBIA_COLOR   = "CCOLOR"
 
 
-@dataclass(frozen=True)
+@dataclass
 class Carta:
     color: Color
     tipo: Tipo
     valor: Optional[int] = None  
     
     def to_dict(self) -> dict:
-        """
-        Serializa la carta a un diccionario para mandarlo en JSON al frontend.
-        Incluye un campo 'representacion' para elegir la imagen en el cliente.
-        """
         # Construir string para el nombre de la imagen:
         # Si es carta numérica: "ROJO_5", "AZUL_9", etc.
         # Si es +2:       "VERDE_MAS2"
@@ -62,3 +59,10 @@ class Carta:
         val = data.get("valor", None)
         return cls(color=col, tipo=tip, valor=val)
 
+    def __eq__(self, other):
+        if not isinstance(other, Carta):
+            return False
+        return self.color == other.color and self.tipo == other.tipo and self.valor == other.valor
+
+    def __hash__(self):
+        return hash((self.color, self.tipo, self.valor))

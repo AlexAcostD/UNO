@@ -127,32 +127,60 @@ def tomar_carta():
 def jugar_carta():
     global partida_actual
     datos = request.get_json()
+    
+    print("DEBUG datos:", datos)
+    nuevo_color = datos.get("nuevo_color")
+    print("DEBUG nuevo_color:", nuevo_color)
+
     color = datos.get('color')
     tipo  = datos.get('tipo')
     valor = datos.get('valor') or None
-
     jugador = partida_actual.nombre_jugador
 
-    # 1) Reconstruye y aplica la carta del jugador
-    carta_jugada = Carta(
-    Color(color),       # crea Color por valor, e.g. Color("AZUL")
-    Tipo(tipo),         # crea Tipo por valor, e.g. Tipo("NUM")
-    int(valor) if valor else None
-    )
+    tipo_enum = Tipo(tipo)
+    valor_int = int(valor) if valor else None
+
+    # 🟨 CASO ESPECIAL: CCOLOR
+    if tipo_enum == Tipo.CAMBIA_COLOR:
+        if not nuevo_color:
+            return jsonify({'error': 'Debes especificar un nuevo color para una carta Cambia Color.'}), 400
+        try:
+            color_enum = Color(nuevo_color.upper())
+        except ValueError:
+            return jsonify({'error': f"Color inválido: {nuevo_color}"}), 400
+
+        carta_jugada = Carta(color=color_enum, tipo=tipo_enum, valor=valor_int)
+    else:
+        carta_jugada = Carta(color=Color(color), tipo=tipo_enum, valor=valor_int)
+
+    # ✅ Buscar carta real en la mano
+    if carta_jugada.tipo == Tipo.CAMBIA_COLOR:
+        encontrada = next((c for c in partida_actual.manos[jugador] if c.tipo == Tipo.CAMBIA_COLOR), None)
+    else:
+        encontrada = next((c for c in partida_actual.manos[jugador] if c == carta_jugada), None)
+
+    if not encontrada:
+        return jsonify({'error': f"No tienes la carta {carta_jugada} en tu mano."}), 400
+
+    # ✅ Aplicar jugada
     try:
-        partida_actual.jugar_carta(jugador, carta_jugada)
+        partida_actual.manos[jugador].remove(encontrada)
+        partida_actual.descartadas.append(carta_jugada)
+        partida_actual.carta_tope = carta_jugada
+        partida_actual._cambiar_turno()
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
 
-    # 2) ¡Ahora es posible que sea el turno del bot!  
-    #    Llamamos a la heurística del bot justo aquí:
+    # 🤖 Acción del bot si le toca
     accion_bot = {}
     if partida_actual.turno == partida_actual.nombre_bot:
         accion_bot = partida_actual.turno_bot()
 
-    # 3) Construimos la respuesta con TODO el estado y la acción del bot
     estado = partida_actual.estado_para_cliente()
     estado['accion_bot'] = accion_bot
+
+
+
     for carta in partida_actual.manos[jugador]:
         print(f"  {carta.color.value} - {carta.tipo.value}" +
                 (f" {carta.valor}" if carta.valor is not None else ""))
@@ -163,6 +191,7 @@ def jugar_carta():
     print(f"carta_tope: {partida_actual.carta_tope.color.value} - {partida_actual.carta_tope.tipo.value}" +
             (f" {partida_actual.carta_tope.valor}" if partida_actual.carta_tope.valor is not None else ""))
     return jsonify(estado)
+
 
 def get_db_connection():
     conn = psycopg2.connect(
