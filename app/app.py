@@ -1,17 +1,15 @@
 from flask import Flask,render_template,request,jsonify, session
 from game.cartas import Carta, Color, Tipo
 from game.engine import UNOGame
+import game.ai
 import psycopg2
 import random
-
 
 ##.\env\Scripts\activate
 ##python .\app\app.py
 app=Flask(__name__)
 app.secret_key = "CAMBIA_ESTO_POR_UNA_CLAVE_REALMENTE_SECRETA"
 partida_actual = None
-
-
 
 @app.route('/')
 def index():
@@ -52,8 +50,6 @@ def cargar_html():
 
     return render_template('cargar.html', partidas=partidas)
 
-
-
 @app.route('/juego.html')
 def juego_html():
     global partida_actual
@@ -70,7 +66,7 @@ def juego_html():
         dificultad = partida_actual.dificultad
     elif nombre and dificultad:
         # Crear nueva partida
-        partida_actual = UNOGame(nombre_jugador=nombre, nombre_bot="Bot", cartas_por_jugador=7)
+        partida_actual = UNOGame(nombre_jugador=nombre, nombre_bot="Bot", cartas_por_jugador=7, loadedModel=game.ai.cargar())
         partida_actual.dificultad = dificultad
         guardar_partida_en_db(partida_actual, dificultad)
     else:

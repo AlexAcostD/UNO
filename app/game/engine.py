@@ -2,6 +2,7 @@ from typing import List, Dict, Optional
 from game.cartas import Carta, Tipo, Color
 from game.baraja import Baraja
 import random
+from tensorflow.keras import Model
 
 class UNOGame:
     def __init__(
@@ -9,12 +10,14 @@ class UNOGame:
         nombre_jugador: str,
         nombre_bot: str = "Bot",
         cartas_por_jugador: int = 7,
-        dificultad: str = "FACIL"
+        dificultad: str = "FACIL",
+        loadedModel: Model = None
     ) -> None:
         self.nombre_jugador = nombre_jugador
         self.nombre_bot = nombre_bot
         self.dificultad = dificultad
         self.baraja = Baraja()
+        self.model = loadedModel
 
         # Repartir manos
         self.manos: Dict[str, List[Carta]] = {nombre_jugador: [], nombre_bot: []}

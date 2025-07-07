@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import os
+from tensorflow.keras import Model
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, InputLayer
 from tensorflow.keras.optimizers import Adam
@@ -123,18 +124,19 @@ def entrenar():
 
     model.save(MODEL_PATH)
 
-def cargar():
+def cargar() -> Model:
     MODEL_PATH = 'model_trained.keras'
 
     if os.path.exists(MODEL_PATH):
         model = load_model(MODEL_PATH)
     else:
         entrenar()
+    return model
 
 # ============================
 # SELECCIÓN DE JUGADA POR LA IA
 # ============================
-def elegir_jugada(mano, carta_tope, dificultad='dificil'):
+def elegir_jugada(mano, carta_tope, model: Model, dificultad='dificil'):
     mano_filtrada = filtrar_dificultad(mano, dificultad)
     entrada = codificar_entrada(mano_filtrada, carta_tope).reshape(1, -1)
     pred = model.predict(entrada, verbose=0)[0]
