@@ -1,3 +1,20 @@
+// boton UNO
+// Añadir evento al botón UNO
+document.addEventListener('DOMContentLoaded', () => {
+  const botonUno = document.getElementById('btn-UNO');
+
+  botonUno.addEventListener('click', () => {
+    const cartasJugador = document.querySelectorAll('#deck img'); // cuenta cartas en mano
+    const cantidad = cartasJugador.length;
+
+    if (cantidad === 1) {
+      alert('¡¡¡UNO!!!');
+    } else {
+      alert(`Te quedan ${cantidad} cartas, no puedes gritar UNO`);
+    }
+  });
+});
+
 // 1) Función para dispersar las cartas en abanico
 function actualizarCartas(container) {
   const cards = container.querySelectorAll('img');

@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
+    <title>UNO: IA vs Jugador</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
-
-
 </head>
 <body>
-    <input type="text" id="nombre" placeholder="Ingresa tu nombre"><br>
-    <button onclick="jugar()">Jugar</button>
-    <button onclick="cargar()">Cargar</button>
-    <button id="btnDificultad" onclick="cambiarDificultad()">FÁCIL</button>
+    <div class="container">
+        <h1>¡Juega UNO contra la IA!</h1>
+        <section class="controls">
+            <input type="text" id="nombre" placeholder="Ingresa tu nombre" aria-label="Nombre del jugador">
+            <div class="button-group">
+                <button onclick="jugar()" class="btn btn-play">Jugar</button>
+                <button onclick="cargar()" class="btn btn-load">Cargar</button>
+                <button id="btnDificultad" onclick="cambiarDificultad()" class="btn btn-difficulty">FÁCIL</button>
+            </div>
+        </section>
+    </div>
     <script src="{{url_for('static', filename='js/index.js')}}"></script>
-    
-
-
 </body>
 </html>

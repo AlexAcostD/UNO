@@ -1,17 +1,134 @@
- body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 100px;
+/* Reset básico y configuración general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url('../img/Unofondo.avif'); /* Ajusta la extensión si es .png u otro formato */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contenedor principal */
+.container {
+    background: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para legibilidad */
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+}
+
+/* Título */
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: #ffeb3b; /* Amarillo inspirado en UNO */
+}
+
+/* Sección de controles */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Estilo del input */
+input[type="text"] {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 10px #ffeb3b;
+    transform: scale(1.02);
+}
+
+/* Grupo de botones */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Estilo general de los botones */
+.btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Estilo específico para cada botón */
+.btn-play {
+    background-color: #d32f2f; /* Rojo UNO */
+    color: #fff;
+}
+
+.btn-play:hover {
+    background-color: #b71c1c;
+}
+
+.btn-load {
+    background-color: #1976d2; /* Azul UNO */
+    color: #fff;
+}
+
+.btn-load:hover {
+    background-color: #1565c0;
+}
+
+.btn-difficulty {
+    background-color: #388e3c; /* Verde UNO */
+    color: #fff;
+}
+
+.btn-difficulty:hover {
+    background-color: #2e7d32;
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+    .container {
+        padding: 1.5rem;
     }
-    input[type="text"] {
-      padding: 10px;
-      width: 250px;
-      font-size: 16px;
-      margin-bottom: 20px;
+
+    h1 {
+        font-size: 2rem;
     }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      cursor: pointer;
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
     }
+}

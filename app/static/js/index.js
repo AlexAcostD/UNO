@@ -2,13 +2,9 @@
 function cargar() {
   window.location.href = '/cargar.html';
 }
-    
-    
-    
-    function jugar() {
+function jugar() {
     const nombre = document.getElementById('nombre').value.trim();
     const dificultad = document.getElementById('btnDificultad').textContent;
-    
     if (nombre.trim() === "") {
         alert("Por favor ingresa tu nombre.");
     } else {
@@ -16,7 +12,7 @@ function cargar() {
     const dificultadCodificada = encodeURIComponent(dificultad);
     window.location.href = `juego.html?nombre=${nombreCodificado}&dificultad=${dificultadCodificada}`;
     }
-    }
+}
 
 
 const niveles = ["FACIL", "MEDIO", "DIFICIL"];

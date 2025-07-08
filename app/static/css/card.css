@@ -8,7 +8,37 @@ body {
   margin: 0;
   overflow: hidden;
   background: #f0f0f0;
+  font-family: 'Roboto', sans-serif;
+  background-image: url('../img/UNOmesa.jpg'); /* Ajusta la extensión si es .png u otro formato */
+  background-size: cover;
+  background-position: center;
+  background-attachment: no-repeat;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    padding: 1rem;
+    
+    color: #fff;
 }
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/UNOmesa.jpg'); /* Imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    filter: blur(5px); /* Ajusta este valor para controlar el difuminado */
+    z-index: -1; /* Coloca el fondo detrás del contenido */
+}
+
+
+
+
 
     .carta-tope img {
       width: 100px;
@@ -41,3 +71,272 @@ body {
   transform: scale(1.2) translateY(-20%) !important;
 }
 
+
+/* Reset básico y configuración general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Contenedor principal en tres columnas */
+.layout-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente */
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilo de las secciones */
+#datos,
+#cartas,
+#opciones {
+    flex: 1;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1); /* Fondo claro semi-transparente */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Centrar contenido de cartas */
+#cartas {
+    text-align: center;
+}
+
+/* Estilo de los encabezados */
+h1 {
+    font-size: 2rem;
+    color: #ffeb3b; /* Amarillo UNO */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+p {
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
+/* Estilo de los botones en #opciones */
+#opciones button {
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 0.5rem auto;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#opciones button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Colores específicos para cada botón */
+#btn-jugar {
+    background-color: #d32f2f; /* Rojo UNO */
+    color: #fff;
+}
+
+#btn-jugar:hover {
+    background-color: #b71c1c;
+}
+
+#btn-finalizar {
+    background-color: #f57c00; /* Naranja para contraste */
+    color: #fff;
+}
+
+#btn-finalizar:hover {
+    background-color: #ef6c00;
+}
+
+#btn-tomar {
+    background-color: #1976d2; /* Azul UNO */
+    color: #fff;
+}
+
+#btn-tomar:hover {
+    background-color: #1565c0;
+}
+
+#btn-guardar {
+    background-color: #388e3c; /* Verde UNO */
+    color: #fff;
+}
+
+#btn-guardar:hover {
+    background-color: #2e7d32;
+}
+
+/* Selector de color */
+#selector-color {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+#selector-color p {
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.color-btn {
+    padding: 0.6rem 1rem;
+    margin: 0.2rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.color-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Colores para los botones de selección de color */
+.color-btn[data-color="ROJO"] {
+    background-color: #d32f2f;
+    color: #fff;
+}
+
+.color-btn[data-color="ROJO"]:hover {
+    background-color: #b71c1c;
+}
+
+.color-btn[data-color="AZUL"] {
+    background-color: #1976d2;
+    color: #fff;
+}
+
+.color-btn[data-color="AZUL"]:hover {
+    background-color: #1565c0;
+}
+
+.color-btn[data-color="VERDE"] {
+    background-color: #388e3c;
+    color: #fff;
+}
+
+.color-btn[data-color="VERDE"]:hover {
+    background-color: #2e7d32;
+}
+
+.color-btn[data-color="AMARILLO"] {
+    background-color: #ffeb3b;
+    color: #333;
+}
+
+.color-btn[data-color="AMARILLO"]:hover {
+    background-color: #fdd835;
+}
+
+/* Estilos de las cartas (sin modificar) */
+
+
+/* Responsividad */
+@media (max-width: 900px) {
+    .layout-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    #datos,
+    #cartas,
+    #opciones {
+        flex: none;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    .card-deck {
+        width: 100%;
+        height: 200px;
+    }
+
+    .card-deck img {
+        width: 90px;
+        height: 150px;
+        margin-left: -45px;
+    }
+
+    .carta-tope img {
+        width: 80px;
+        height: 112px;
+    }
+
+    #opciones button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    .color-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+/* Estilo para el botón UNO */
+#btn-UNO {
+    background-color: #ffeb3b; /* Amarillo UNO */
+    color: #333; /* Texto oscuro para contraste */
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 0.5rem auto;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#btn-UNO:hover {
+    background-color: #fdd835; /* Amarillo más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}

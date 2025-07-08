@@ -8,7 +8,7 @@ class Color(Enum):
     VERDE = "VERDE"
     ROJO = "ROJO"
     AMARILLO = "AMARILLO"
-    NEGRO = "NEGRO"
+
 
 class Tipo(Enum):
     NUMERO         = "NUM"
