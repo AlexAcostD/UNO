@@ -4,6 +4,9 @@ from game.baraja import Baraja
 from game.ai     import elegir_jugada
 import random
 from tensorflow.keras import Model
+from game.ai import entrenar, cargar
+
+modelo : Model = cargar()
 
 class UNOGame:
     def __init__(
@@ -12,13 +15,11 @@ class UNOGame:
         nombre_bot: str = "Bot",
         cartas_por_jugador: int = 7,
         dificultad: str = "FACIL",
-        loadedModel: Model = None
     ) -> None:
         self.nombre_jugador = nombre_jugador
         self.nombre_bot = nombre_bot
         self.dificultad = dificultad
         self.baraja = Baraja()
-        self.model = loadedModel
 
         # Repartir manos
         self.manos: Dict[str, List[Carta]] = {nombre_jugador: [], nombre_bot: []}

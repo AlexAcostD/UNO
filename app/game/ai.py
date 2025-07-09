@@ -31,21 +31,20 @@ class Carta:
 # ============================
 # GENERACIÓN DE CARTAS Y MAPEO
 # ============================
-def genCartas():
-    COLORES = ['red', 'green', 'blue', 'yellow']
-    VALORES = list(range(0, 10)) + [Tipo.PULSA_DOS, Tipo.PIERDE_TURNO, Tipo.CAMBIA_COLOR]
+COLORES = ['red', 'green', 'blue', 'yellow']
+VALORES = list(range(0, 10)) + [Tipo.PULSA_DOS, Tipo.PIERDE_TURNO, Tipo.CAMBIA_COLOR]
 
-    TODAS_CARTAS = []
-    for color in COLORES:
-        for v in VALORES:
-            if isinstance(v, int):
-                TODAS_CARTAS.append(Carta(color, Tipo.NUMERO, v))
-            else:
-                TODAS_CARTAS.append(Carta(color, v))
+TODAS_CARTAS = []
+for color in COLORES:
+    for v in VALORES:
+        if isinstance(v, int):
+            TODAS_CARTAS.append(Carta(color, Tipo.NUMERO, v))
+        else:
+            TODAS_CARTAS.append(Carta(color, v))
 
-    CARTA_TO_ID = {c.to_id(): i for i, c in enumerate(TODAS_CARTAS)}
-    ID_TO_CARTA = {i: c for c, i in CARTA_TO_ID.items()}
-    NUM_CARTAS = len(CARTA_TO_ID)
+CARTA_TO_ID = {c.to_id(): i for i, c in enumerate(TODAS_CARTAS)}
+ID_TO_CARTA = {i: c for c, i in CARTA_TO_ID.items()}
+NUM_CARTAS = len(CARTA_TO_ID)
 
 # ============================
 # REGLAS DE COMPATIBILIDAD DE CARTAS
@@ -123,14 +122,16 @@ def entrenar():
     model.fit(X_train, y_train, epochs=8, batch_size=64)
 
     model.save(MODEL_PATH)
+    return model
 
 def cargar() -> Model:
     MODEL_PATH = 'model_trained.keras'
 
     if os.path.exists(MODEL_PATH):
+        print(f"Cargando modelo desde {MODEL_PATH}")
         model = load_model(MODEL_PATH)
-    else:
-        entrenar()
+    # else:
+    #     model = entrenar()
     return model
 
 # ============================

@@ -66,7 +66,7 @@ def juego_html():
         dificultad = partida_actual.dificultad
     elif nombre and dificultad:
         # Crear nueva partida
-        partida_actual = UNOGame(nombre_jugador=nombre, nombre_bot="Bot", cartas_por_jugador=7, loadedModel=game.ai.cargar())
+        partida_actual = UNOGame(nombre_jugador=nombre, nombre_bot="Bot", cartas_por_jugador=7)
         partida_actual.dificultad = dificultad
         guardar_partida_en_db(partida_actual, dificultad)
     else:
