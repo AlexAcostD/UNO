@@ -4,7 +4,7 @@ from game.baraja import Baraja
 from game.ai     import elegir_jugada
 import random
 from tensorflow.keras import Model
-from game.ai import entrenar, cargar
+from game.ai import entrenar, cargar, TODAS_CARTAS, generar_mano
 
 modelo : Model = cargar()
 
@@ -189,8 +189,22 @@ class UNOGame:
 
         self._cambiar_turno()
 
-        #response = elegir_jugada()
-        #print(response)
+        ######## CÓDIGO DE EJEMPLO PARA LA IA ########
+        ######## COMENTAR ESTE BLOQUE EN PRODUCCION ########
+        carta_mesa = random.choice(TODAS_CARTAS)
+        mano = generar_mano()
+        dificultad = 'facil'  # Cambia entre 'facil', 'media', 'dificil'
+        jugada = elegir_jugada(mano, carta_mesa, dificultad=dificultad)
+        print("Dificultad:", dificultad)
+        print("Carta en mesa:", carta_mesa)
+        print("Mano:", [str(c) for c in mano])
+        print("IA juega:", jugada)
+        # SALIDA ESPERADA:
+        # Dificultad: facil
+        # Carta en mesa: green_2
+        # Mano: ['red_0', 'green_4', 'red_6', 'red_9', 'yellow_8', 'blue_4', 'red_5']
+        # IA juega: green_4
+
         return {"accion": "robó", "carta": None}
 
     def estado_para_cliente(self) -> Dict:
