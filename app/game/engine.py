@@ -1,6 +1,7 @@
 from typing import List, Dict, Optional
 from game.cartas import Carta, Tipo, Color
 from game.baraja import Baraja
+from game.ai     import elegir_jugada
 import random
 from tensorflow.keras import Model
 
@@ -186,6 +187,9 @@ class UNOGame:
             return {"accion": "robó_y_jugó", "carta": carta_robada.to_dict()}
 
         self._cambiar_turno()
+
+        #response = elegir_jugada()
+        #print(response)
         return {"accion": "robó", "carta": None}
 
     def estado_para_cliente(self) -> Dict:
